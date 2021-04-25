@@ -45,7 +45,7 @@ void setup() {
   gridSearch = new aStar<GridCell>(gridHeuristic); 
   
   // Build grid
-  grid = new Grid(generateGridFromFile(), gridSearch, true);
+  grid = new Grid(gridSearch, true);
   
   // Set button locations
   buttons = new ArrayList<PVector>();

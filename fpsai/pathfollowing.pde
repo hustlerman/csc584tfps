@@ -91,7 +91,7 @@ class SteeringFollowing extends SteeringSeek {
 
 PointPath gridPath(float startX, float startY, float goalX, float goalY, Grid grid) {
   grid.reset((int)Math.floor(startX),(int)Math.floor(startY), (int)Math.floor(goalX), (int)Math.floor(goalY));
-  if(!grid.map[Math.round(goalY)][Math.round(goalX)])
+  if(!grid.graph[Math.round(goalY)][Math.round(goalX)].value.traversable)
     return null;
   while(grid.search.shortestPath() == null) {
     grid.search.update(); 
