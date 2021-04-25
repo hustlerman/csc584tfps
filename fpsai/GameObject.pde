@@ -33,7 +33,7 @@ class BoidRenderer implements Renderable {
   void render() {
     fill(0,180,255);
     stroke(0,180,255);
-    ellipse(.0f, .0f, l, l);
-    triangle(l, .0f, w, h, w, -h); 
+    ellipse(.0f, .0f, l/5, l/5);
+    triangle(l/5, .0f, w/5, h/5, w/5, -h/5); 
   }
 }
