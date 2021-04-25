@@ -171,14 +171,14 @@ class Grid {
     
     Collection<Node<GridCell>> closed = search.closedSet();
     
-    if(null != closed) {
+   /* if(null != closed) {
       noStroke();
       fill(100, 100, 100);
       
       for(Node<GridCell> node : closed)
         circle(node.value.x * scale + 0.5 * scale, 
           node.value.y * scale  + 0.5 * scale, 0.8 * scale);
-    }
+    }*/
     
     // Draw path if available
     List<Edge<GridCell>> path = search.shortestPath();

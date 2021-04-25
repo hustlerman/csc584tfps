@@ -31,6 +31,19 @@ void initializeBoid() {
   boid.maxSpeed = 40f;
   boid.drag = 0.1f;
   objects.add(boid);
+  
+  // Enemy Boids
+  DynamicBoid enemyboid1 = new DynamicBoid((10.5) * grid.scale , 2.5 * grid.scale);
+  DynamicBoid enemyboid2 = new DynamicBoid((30.5) * grid.scale , 1.5 * grid.scale);
+  DynamicBoid enemyboid3 = new DynamicBoid((40.5) * grid.scale , 4.5 * grid.scale);
+  DynamicBoid enemyboid4 = new DynamicBoid((24.5) * grid.scale , 5.5 * grid.scale);
+  DynamicBoid enemyboid5 = new DynamicBoid((25.5) * grid.scale , 7.5 * grid.scale);
+  objects.add(enemyboid1);
+  objects.add(enemyboid2);
+  objects.add(enemyboid3);
+  objects.add(enemyboid4);
+  objects.add(enemyboid5);
+  
 }
 
 void mouseClicked() {
