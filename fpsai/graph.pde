@@ -69,7 +69,7 @@ class Grid {
     
     for(int y=0; y < map.length; ++y)
       for(int x=0; x < map[y].length; ++x)
-        graph[y][x] = new Node<GridCell>(new GridCell(x,y, map[y][x]));
+        graph[y][x] = new Node<GridCell>(new GridCell(x,y, map[y][x], map));
     
     // Construct UP edges
     for(int y=0; y < map.length - 1; ++y)
