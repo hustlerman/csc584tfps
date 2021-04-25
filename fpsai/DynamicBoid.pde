@@ -5,6 +5,8 @@ class DynamicBoid extends GameObject {
   float drag = .0f;
   ArrayList<SteeringMovement> controllers;
   Renderable shape = new BoidRenderer(25);
+  // Enemy Reder
+  //Renderable enemyShape = new EnemyBoidRenderer(25);
   DynamicBoid(float x, float y) {
     controllers = new ArrayList<SteeringMovement>();
     character = new Kinematic(new PVector(x, y), PI * .5f);
@@ -47,7 +49,9 @@ class DynamicBoid extends GameObject {
     pushMatrix();
     translate(character.position.x, character.position.y);
     rotate(-character.orientation);
+    
     shape.render();
+    //enemyShape.render();//Enemy
     popMatrix();
   }
   
