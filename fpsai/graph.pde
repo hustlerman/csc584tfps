@@ -40,27 +40,36 @@ class Grid {
   
   float scale = 12f;
   
-  boolean[][] map;
   Node<GridCell>[][] graph;
   
   GraphSearch<GridCell> search;
   Node<GridCell> start = null;
   Node<GridCell> goal = null;
   
-  Grid(boolean[][] map, GraphSearch search) {
-    this(map, search, false);
-  }
+  //Grid(boolean[][] map, GraphSearch search) {
+  //  this(map, search, false);
+  //}
   
-  Grid(boolean[][] map, GraphSearch search, boolean diagonal) {
-    this.map = map;
+  Grid(GraphSearch search, boolean diagonal) {
+    // Loads map from file
+    String[] lines = loadStrings("gamemap.txt");
+    
+    boolean[][] map = new boolean[lines.length][lines[0].length()];
+    
+    for(int i = 0; i < lines.length; i++) {
+      for(int j = 0; j < lines[i].length(); j++) {
+        map[i][j] = lines[i].charAt(j) == 'o';
+      }
+    }
+    
     this.search = search;
     
     // Initialize graph
-    graph = new Node[map.length][map[0].length];
+    this.graph = new Node[map.length][map[0].length];
     
     for(int y=0; y < map.length; ++y)
       for(int x=0; x < map[y].length; ++x)
-        graph[y][x] = new Node<GridCell>(new GridCell(x,y));
+        graph[y][x] = new Node<GridCell>(new GridCell(x,y, map[y][x]));
     
     // Construct UP edges
     for(int y=0; y < map.length - 1; ++y)
@@ -133,14 +142,17 @@ class Grid {
     // Draw map
     stroke(0,0,0);
     
-    for(int y=0; y < map.length; y++) {
-      for(int x=0; x < map[y].length; x++) {
-        if(map[y][x])
-          //fill(0,0,0);
-          continue;
-        else
+    for(int y=0; y < graph.length; y++) {
+      for(int x=0; x < graph[y].length; x++) {
+        if(graph[y][x].value.traversable) {
+          if(graph[y][x].value.cleared) {
+            fill(0,255,0);
+          } else {
+            fill(255,192,203);
+          }
+        } else {
           fill(255,255,255);
-        
+        }
         square(x * scale, y * scale, scale);
       }
     }

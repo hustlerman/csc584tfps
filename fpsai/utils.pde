@@ -3,10 +3,14 @@ import java.util.Scanner;
 class GridCell {
   int x;
   int y;
+  boolean traversable;
+  boolean cleared;
   
-  GridCell(int x, int y) {
+  GridCell(int x, int y, boolean traversable) {
     this.x = x;
     this.y = y;
+    this.traversable = traversable;
+    this.cleared = false;
   }
 }
 
