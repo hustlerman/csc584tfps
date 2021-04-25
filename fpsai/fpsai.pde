@@ -1,18 +1,22 @@
 int FRAME_RATE = 25;
+float GRID_SCALE = 12.f;
 
-Grid grid;
 DynamicBoid boid;
 SteeringFollowing follow;
-GraphSearch<GridCell> gridSearch;
-Heuristic<GridCell> gridHeuristic;
+
 ArrayList<float[]> buttons;// EnemyLocations
+
 int framesPast = 0;
 
 ArrayList<GameObject> objects = new ArrayList<GameObject>();
+ArrayList<Grid> grids = new ArrayList<Grid>();
+int activeGrid = 0;
 
 void initializeBoid() {
-  grid.reset(20,2,20,2);
-  boid = new DynamicBoid((20.5) * grid.scale , 2.5 * grid.scale);
+  for(Grid grid: grids) 
+    grid.reset(20,2,20,2);
+    
+  boid = new DynamicBoid((20.5) * GRID_SCALE , 2.5 * GRID_SCALE);
   PointPath path = new PointPath();
   path.addPoint(new PVector(boid.character.position.x, boid.character.position.y));
   follow = new SteeringFollowing(path);
@@ -26,8 +30,8 @@ void initializeBoid() {
   look.slowRadius = 0.2 * PI;
   look.timeToTarget = 0.25f;
     
+  boid.addMovement(follow);  
   boid.addMovement(look);
-  boid.addMovement(follow);
   boid.maxSpeed = 40f;
   boid.drag = 0.1f;
   objects.add(boid);
@@ -39,48 +43,28 @@ void initializeBoid() {
   while(buttons.size() > 0 && count <= 5) {
             int index = rand.nextInt(buttons.size());
             System.out.println("Selected: "+buttons.get(index)[0]+" "+buttons.get(index)[1]);
-            DynamicBoid temp = new DynamicBoid((buttons.get(index)[0]) * grid.scale,(buttons.get(index)[1])* grid.scale);
+            DynamicBoid temp = new DynamicBoid((buttons.get(index)[0]) * GRID_SCALE,(buttons.get(index)[1])* GRID_SCALE);
             objects.add(temp);
             buttons.remove(index);
             count++;
   }
-  /*DynamicBoid enemyboid1 = new DynamicBoid((42.5) * grid.scale , 1.5 * grid.scale);
-  DynamicBoid enemyboid2 = new DynamicBoid((44.5) * grid.scale , 7.5 * grid.scale);
-  DynamicBoid enemyboid3 = new DynamicBoid((72.5) * grid.scale , 19.5 * grid.scale);
-  DynamicBoid enemyboid4 = new DynamicBoid((66.5) * grid.scale , 5.5 * grid.scale);
-  DynamicBoid enemyboid5 = new DynamicBoid((74.5) * grid.scale , 2.5 * grid.scale);
-  objects.add(enemyboid1);
-  objects.add(enemyboid2);
-  objects.add(enemyboid3);
-  objects.add(enemyboid4);
-  objects.add(enemyboid5);*/
-  
 }
 
 void mouseClicked() {
-  PointPath path = gridPath(boid.character.position.x/grid.scale, boid.character.position.y/grid.scale, (mouseX + grid.scale/2)/grid.scale, (mouseY+ grid.scale/2)/grid.scale, grid);
+  PointPath path = gridPath(boid.character.position.x/GRID_SCALE, boid.character.position.y/GRID_SCALE, (mouseX + GRID_SCALE)/GRID_SCALE, (mouseY + GRID_SCALE)/GRID_SCALE, grids.get(activeGrid));
   if(path != null) {
     follow.path = path;
     follow.currPoint = 0;
   }
 }
 
+// Creates initial setup for simulation
 void setup() {
   
   // Configure processing
   size(960,340);
   frameRate(FRAME_RATE);
   smooth(2);
-  
-  // Configure search
-  //gridHeuristic = new Manhattan();
-  gridHeuristic = new ManhattanCover();
-
-  //gridSearch = new aStar<GridCell>(gridHeuristic);
-  gridSearch = new aStarTactical<GridCell>(gridHeuristic);
-
-  // Build grid
-  grid = new Grid(gridSearch, true);
   
   // Set button locations coordinates
   buttons = new ArrayList<float[]>();
@@ -105,31 +89,32 @@ void setup() {
   buttons.add(new float[]{74.5, 2.5});
   buttons.add(new float[]{72.5, 19.5});
   
+  // Build grids
+  grids.add(new Grid(new aStar<GridCell>(new Manhattan()), GRID_SCALE, true));
+  grids.add(new Grid(new aStarTactical<GridCell>(new ManhattanCover()), GRID_SCALE, true));
+
   
   initializeBoid();
   //initializeDecisionTree();
 }
 
+
+
 void draw(){
   float dt = 1.0f / (float) FRAME_RATE;
   
-  // Check if we should update the color
-  PVector position = boid.getPosition();
+  // Clear background
+  background(255);
   
-  // Fill background
-  
-  // Build decision context
-  GameState state = new GameState();
-   
-  // Go to hiding space if it's time
-  state.add("hide", (framesPast / FRAME_RATE)%60 > 30 ? "True": "False");
+  // Check if you've arrived at the destination
+  //if(boid.
   
   // Update game objects
   for(GameObject obj : objects)
     obj.update(dt);
     
   //translate(grid.scale, grid.scale);
-  grid.render();
+  grids.get(activeGrid).render();
   
   // Render game objects
   for(GameObject obj : objects) {

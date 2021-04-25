@@ -22,11 +22,13 @@ class DynamicBoid extends GameObject {
     for(SteeringMovement controller : controllers) {
         DynamicSteeringOutput steering = controller.getSteering(character);
         
-        if(null != steering) {
+        if(steering != null) {
           totalSteering.linear.add(steering.linear);
           totalSteering.angular += steering.angular;
         }
     }
+    
+    
     
     character.velocity.mult(1.0f - drag);
     character.rotation *= 1.0f - drag;   
