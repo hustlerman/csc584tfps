@@ -5,12 +5,31 @@ class GridCell {
   int y;
   boolean traversable;
   boolean cleared;
+  int exposure;
   
-  GridCell(int x, int y, boolean traversable) {
+  GridCell(int x, int y, boolean traversable, boolean map[][]) {
     this.x = x;
     this.y = y;
     this.traversable = traversable;
     this.cleared = false;
+    this.exposure = 0;
+    
+    if(y < map.length - 1 && map[y + 1][x])
+      exposure++;
+    if(y > 1 && map[y - 1][x])
+      exposure++;
+    if(x > 1 && map[y][x - 1])
+      exposure++;
+    if(x < map[0].length - 1 && map[y][x + 1])
+      exposure++; 
+    if(x > 1 && y < map.length - 1 && map[y + 1][x - 1])
+      exposure++;
+    if(x < map[0].length - 1&& y < map.length - 1 && map[y + 1][x + 1])
+      exposure++;
+    if(x > 1 && y > 1 && map[y - 1][x - 1])
+      exposure++;
+    if(x < map[0].length - 1 && y > 1 &&map[y - 1][x + 1])
+      exposure++;
   }
 }
 

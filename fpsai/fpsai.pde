@@ -33,6 +33,14 @@ void initializeBoid() {
   objects.add(boid);
 }
 
+void mouseClicked() {
+  PointPath path = gridPath(boid.character.position.x/grid.scale, boid.character.position.y/grid.scale, (mouseX + grid.scale/2)/grid.scale, (mouseY+ grid.scale/2)/grid.scale, grid);
+  if(path != null) {
+    follow.path = path;
+    follow.currPoint = 0;
+  }
+}
+
 void setup() {
   
   // Configure processing
@@ -43,7 +51,7 @@ void setup() {
   // Configure search
   gridHeuristic = new Manhattan();
   gridSearch = new aStar<GridCell>(gridHeuristic); 
-  
+
   // Build grid
   grid = new Grid(gridSearch, true);
   
