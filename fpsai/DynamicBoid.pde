@@ -4,7 +4,7 @@ class DynamicBoid extends GameObject {
   float maxSpeed = 50000f;
   float drag = .0f;
   ArrayList<SteeringMovement> controllers;
-  
+  Renderable shape = new BoidRenderer(25);
   DynamicBoid(float x, float y) {
     controllers = new ArrayList<SteeringMovement>();
     character = new Kinematic(new PVector(x, y), PI * .5f);
@@ -42,6 +42,13 @@ class DynamicBoid extends GameObject {
       character.orientation -= TWO_PI;
     else if(-PI > character.orientation)
       character.orientation += TWO_PI;
+  }
+  void render() {
+    pushMatrix();
+    translate(character.position.x, character.position.y);
+    rotate(-character.orientation);
+    shape.render();
+    popMatrix();
   }
   
   PVector getPosition() {
