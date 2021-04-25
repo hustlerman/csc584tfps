@@ -1,9 +1,15 @@
-class GameObject {
-  
+abstract class GameObject {
+  void update(float dt) {};
+  void render() {};
+  PVector getPosition() { 
+    return null; 
+  }
+  PVector getVelocity() { 
+    return null; 
+  }
 }
 
 class Wall {
-  
   
 }
 
