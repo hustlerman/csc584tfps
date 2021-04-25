@@ -196,7 +196,7 @@ class aStarTactical<T> extends GraphSearch<T> {
        
        // Iterate over each successor
        for(Edge<T> edge : tag.node.outgoing) {
-         float cfs = tag.value + edge.weight + ((GridCell)edge.end.value).exposure * 10;
+         float cfs = tag.value + edge.weight + (float)Math.pow(((GridCell)edge.end.value).exposure, 5);
          float h = heuristic.value(edge.end.value, goal.value);
          HeuristicPriorityTag<T> n = (HeuristicPriorityTag<T>)tags.get(edge.end);
          // If the tag is null, then we haven't encountered it before
