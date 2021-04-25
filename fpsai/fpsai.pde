@@ -49,8 +49,11 @@ void setup() {
   smooth(2);
   
   // Configure search
-  gridHeuristic = new Manhattan();
-  gridSearch = new aStar<GridCell>(gridHeuristic); 
+  //gridHeuristic = new Manhattan();
+  gridHeuristic = new ManhattanCover();
+
+  //gridSearch = new aStar<GridCell>(gridHeuristic);
+  gridSearch = new aStarTactical<GridCell>(gridHeuristic);
 
   // Build grid
   grid = new Grid(gridSearch, true);
