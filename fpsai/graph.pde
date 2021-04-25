@@ -38,7 +38,7 @@ class Edge<T> {
 
 class Grid {
   
-  float scale = 20f;
+  float scale = 12f;
   
   boolean[][] map;
   Node<GridCell>[][] graph;

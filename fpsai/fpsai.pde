@@ -36,7 +36,7 @@ void initializeBoid() {
 void setup() {
   
   // Configure processing
-  size(960,720);
+  size(960,340);
   frameRate(FRAME_RATE);
   smooth(2);
   
