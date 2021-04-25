@@ -159,6 +159,66 @@ class aStar<T> extends GraphSearch<T> {
   
 }
 
+class aStarTactical<T> extends GraphSearch<T> {
+  Heuristic<T> heuristic;
+  
+  aStarTactical(Heuristic<T> heuristic) {
+     this.heuristic = heuristic;
+  }
+  
+  void reset(Node<T> start, Node<T> goal) {
+    this.goal = goal;
+    
+    tags = new HashMap<Node<T>,PriorityTag<T>>();
+  
+    open = new PriorityQueue<PriorityTag<T>>();
+    closed = new HashSet<Node<T>>();
+    
+    PriorityTag<T> tag = new HeuristicPriorityTag<T>(start, 0 , null, heuristic.value(start.value, goal.value));
+    tags.put(start, tag);
+    open.add(tag);
+    maxOpen = 1;
+  }
+  
+  void update() {
+     // Check if there's anything in the open set
+     if(!open.isEmpty()) {
+       maxOpen = max(maxOpen, open.size());
+  
+       // Choose the most promising node from the frontier
+       PriorityTag<T> tag = open.poll();
+       // If the current tag is the goal, set the lowest cost path
+       if(tag.node == goal) {
+          open.clear();
+          closed.add(goal);
+          return; 
+       }
+       
+       // Iterate over each successor
+       for(Edge<T> edge : tag.node.outgoing) {
+         float cfs = tag.value + edge.weight + ((GridCell)edge.end.value).exposure * 10;
+         float h = heuristic.value(edge.end.value, goal.value);
+         HeuristicPriorityTag<T> n = (HeuristicPriorityTag<T>)tags.get(edge.end);
+         // If the tag is null, then we haven't encountered it before
+         if(n == null) {
+           HeuristicPriorityTag<T> next_tag = new HeuristicPriorityTag<T>(edge.end, cfs, edge, h);
+           tags.put(edge.end, next_tag);
+           open.add(next_tag);
+         } else if(open.contains(n) && cfs < n.value) { // Otherwise, check to see if this path was more optimal than the one on the frontier
+           open.remove(n);
+           n.value = cfs;
+           n.edge = edge;
+           n.heuristicValue = h;
+           open.add(n);
+         }   
+       }
+       closed.add(tag.node);
+     }
+   }
+  
+}
+
+
 class GreedyBestFirst<T> extends GraphSearch<T> {
   Heuristic<T> heuristic; 
   
