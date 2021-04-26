@@ -4,6 +4,7 @@ int NUM_ENEMIES = 5;
 int NUM_SIMULATIONS = 100;
 PVector START = new PVector(3.5, 3.5);
 PVector GOAL = new PVector(75.5, 14.5);
+PVector radius = new PVector(4,4);// For Radius for enemy Boid
 DynamicBoid boid;
 SteeringFollowing follow;
 
@@ -75,8 +76,6 @@ void nextSimulation() {
     enemySpawnpoints.add(p);
   }
   
-  // 
-  
 }
 
 void outputData() {
@@ -143,9 +142,15 @@ void draw(){
   // Check if you've arrived at the destination
   if(follow.currPoint == follow.path.points.size() - 1) {
     System.out.println("here!");
+    // to check which enemy boid is seen by our boid
+    for(DynamicBoid enemy: enemyBoids){
+      if(enemy.seenByEnemy){
+        System.out.println("Seen!");
+        enemy.seenByEnemy = false;
+      }
+    }
     // Move to next search algorithm
     activeGrid = (activeGrid + 1) % grids.size();
-    
     // Reset boid position to start and change path
     boid.setPosition(START.copy().mult(GRID_SCALE));
     follow.path = gridPath(START.x, START.y, GOAL.x, GOAL.y, grids.get(activeGrid)); //<>//
@@ -157,6 +162,22 @@ void draw(){
     if(activeGrid == 0) {
       nextSimulation();
     }
+  }
+  //For checking current position within each enemyBoids radius
+  for(DynamicBoid enemy: enemyBoids){
+    //PointPath currentPosition = follow.path;
+    PVector enemyPosition = enemy.getPosition(); 
+    PVector temp = boid.getPosition(); 
+   /*System.out.println("X for path= "+enemyPosition.x* GRID_SCALE);
+    System.out.println("Y for path= "+enemyPosition.y* GRID_SCALE);
+    System.out.println("X for currentPosition = "+ temp.x* GRID_SCALE);
+    System.out.println("Y for currentPosition = "+ temp.y* GRID_SCALE);
+    */
+    if(abs(temp.x - enemyPosition.x)/ GRID_SCALE <= radius.x && abs(temp.y-enemyPosition.y)/GRID_SCALE <= radius.y){
+    enemy.seenByEnemy = true;
+    }
+    
+    
   }
   
   // Update game objects
