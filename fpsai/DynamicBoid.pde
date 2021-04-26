@@ -7,6 +7,8 @@ class DynamicBoid extends GameObject {
   Renderable shape = new BoidRenderer(25);
   // Enemy Reder
   //Renderable enemyShape = new EnemyBoidRenderer(25);
+  boolean seenByEnemy = false; // seen by enemy
+  //HashSet<PVector> radiusPoints = new HashSet<PVector>();// Points visible to enemy boids.
   DynamicBoid(float x, float y) {
     controllers = new ArrayList<SteeringMovement>();
     character = new Kinematic(new PVector(x, y), PI * .5f);
