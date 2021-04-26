@@ -10,6 +10,6 @@ class Manhattan implements Heuristic<GridCell> {
 
 class ManhattanCover implements Heuristic<GridCell> {
   float value(GridCell start, GridCell goal) {
-    return abs(goal.x - start.x) + abs(goal.y - start.y) + start.exposure * 100;
+    return abs(goal.x - start.x) + abs(goal.y - start.y) + (float)Math.pow(start.exposure, 5);
   }
 }

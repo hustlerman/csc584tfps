@@ -1,0 +1,116 @@
+int FRAME_RATE = 25;
+float GRID_SCALE = 12.f;
+
+DynamicBoid boid;
+PVector startingPosition;
+SteeringFollowing follow;
+GraphSearch<GridCell> aStarGridSearch;
+GraphSearch<GridCell> coverGridSearch;
+ArrayList<PVector> buttons;
+int framesPast = 0;
+
+ArrayList<GameObject> objects = new ArrayList<GameObject>();
+ArrayList<Grid> grids = new ArrayList<Grid>();
+int activeGrid = 0;
+
+void initializeBoid() {
+  for(Grid grid: grids) 
+    grid.reset(20,2,20,2);
+    
+  boid = new DynamicBoid((20.5) * GRID_SCALE , 2.5 * GRID_SCALE);
+  PointPath path = new PointPath();
+  path.addPoint(new PVector(boid.character.position.x, boid.character.position.y));
+  follow = new SteeringFollowing(path);
+  follow.epsilon = 5;
+  follow.currentParam = 0.0;
+  
+  SteeringLook look = new SteeringLook();
+  look.maxAngular = 10.0f * PI;
+  look.maxRotation = 2.0 * PI;
+  look.targetRadius = 0.0001f * PI;
+  look.slowRadius = 0.2 * PI;
+  look.timeToTarget = 0.25f;
+    
+  boid.addMovement(follow);  
+  boid.addMovement(look);
+  boid.maxSpeed = 40f;
+  boid.drag = 0.1f;
+  objects.add(boid);
+  
+  // Enemy Boids
+  DynamicBoid enemyboid1 = new DynamicBoid((10.5) * GRID_SCALE , 2.5 * GRID_SCALE);
+  DynamicBoid enemyboid2 = new DynamicBoid((30.5) * GRID_SCALE , 1.5 * GRID_SCALE);
+  DynamicBoid enemyboid3 = new DynamicBoid((40.5) * GRID_SCALE , 4.5 * GRID_SCALE);
+  DynamicBoid enemyboid4 = new DynamicBoid((24.5) * GRID_SCALE , 5.5 * GRID_SCALE);
+  DynamicBoid enemyboid5 = new DynamicBoid((25.5) * GRID_SCALE , 7.5 * GRID_SCALE);
+  objects.add(enemyboid1);
+  objects.add(enemyboid2);
+  objects.add(enemyboid3);
+  objects.add(enemyboid4);
+  objects.add(enemyboid5);
+  
+}
+
+void nextSimulation() {
+  // Set boid start
+  
+  // Set enemy locations
+  
+  // Set new goal node? we can keep it the same for now
+}
+
+void mouseClicked() {
+  PointPath path = gridPath(boid.character.position.x/GRID_SCALE, boid.character.position.y/GRID_SCALE, (mouseX + GRID_SCALE)/GRID_SCALE, (mouseY + GRID_SCALE)/GRID_SCALE, grids.get(activeGrid));
+  if(path != null) {
+    follow.path = path;
+    follow.currPoint = 0;
+  }
+}
+
+// Creates initial setup for simulation
+void setup() {
+  
+  // Configure processing
+  size(960,340);
+  frameRate(FRAME_RATE);
+  smooth(2);
+
+  // Build grids
+  grids.add(new Grid(new aStar<GridCell>(new Manhattan()), GRID_SCALE, true));
+  grids.add(new Grid(new aStarTactical<GridCell>(new ManhattanCover()), GRID_SCALE, true));
+  
+  initializeBoid();
+  //initializeDecisionTree();
+}
+
+
+
+void draw(){
+  float dt = 1.0f / (float) FRAME_RATE;
+  
+  // Clear background
+  background(255);
+  
+  // Check if you've arrived at the destination
+  if(follow.currPoint == follow.path.points.size() - 1) {
+    // Swap to next algorithm
+    activeGrid = (activeGrid + 1) % grids.size();
+    if(activeGrid == 0) {
+      // TODO: Reset to next simulation
+    }
+  }
+  
+  // Update game objects
+  for(GameObject obj : objects)
+    obj.update(dt);
+    
+  //translate(grid.scale, grid.scale);
+  grids.get(activeGrid).render();
+  
+  // Render game objects
+  for(GameObject obj : objects) {
+    obj.render();
+  }
+  
+  
+}

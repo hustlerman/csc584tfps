@@ -38,7 +38,7 @@ class Edge<T> {
 
 class Grid {
   
-  float scale = 12f;
+  float scale;
   
   Node<GridCell>[][] graph;
   
@@ -50,7 +50,8 @@ class Grid {
   //  this(map, search, false);
   //}
   
-  Grid(GraphSearch search, boolean diagonal) {
+  Grid(GraphSearch search, float scale, boolean diagonal) {
+    this.scale = scale;
     // Loads map from file
     String[] lines = loadStrings("gamemap.txt");
     
