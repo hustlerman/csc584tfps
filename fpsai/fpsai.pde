@@ -1,7 +1,7 @@
 int FRAME_RATE = 25;
 float GRID_SCALE = 12.f;
 int NUM_ENEMIES = 5;
-int NUM_SIMULATIONS = 100;
+int NUM_SIMULATIONS = 30;
 PVector START = new PVector(3.5, 3.5);
 PVector GOAL = new PVector(75.5, 14.5);
 PVector radius = new PVector(4,4);// For Radius for enemy Boid
@@ -17,8 +17,10 @@ ArrayList<DynamicBoid> enemyBoids = new ArrayList<DynamicBoid>();
 
 ArrayList<Grid> grids = new ArrayList<Grid>();
 
+ArrayList<ArrayList<Integer>> pathSeen = new ArrayList<ArrayList<Integer>>();
+
 int activeGrid = 0;
-int currSim = -1;
+int currSim = 0;
 
 void initializeBoid() {
   boid = new DynamicBoid(START.x  * GRID_SCALE, START.y  * GRID_SCALE);
@@ -79,16 +81,22 @@ void nextSimulation() {
 }
 
 void outputData() {
+  // Print A* stats
+  float mean = 0;
+  for(Integer i: pathSeen.get(0)) {
+    mean += i.intValue(); 
+  }
+  mean /= pathSeen.get(0).size();
+  System.out.println("A* (Average Spotted by Enemies): " + mean);
   
+  // Print Cover A* stats
+  mean = 0;
+  for(Integer i: pathSeen.get(1)) {
+    mean += i.intValue(); 
+  }
+  mean /= pathSeen.get(1).size();
+  System.out.println("Cover (Average Spotted by Enemies): " + mean);
 }
-
-//void mouseClicked() {
-//  PointPath path = gridPath(boid.character.position.x/GRID_SCALE, boid.character.position.y/GRID_SCALE, (mouseX + GRID_SCALE)/GRID_SCALE, (mouseY + GRID_SCALE)/GRID_SCALE, grids.get(activeGrid));
-//  if(path != null) {
-//    follow.path = path;
-//    follow.currPoint = 0;
-//  }
-//}
 
 // Creates initial setup for simulation
 void setup() {
@@ -124,8 +132,10 @@ void setup() {
   // Build grids
   grids.add(new Grid(new aStar<GridCell>(new Manhattan()), GRID_SCALE, true));
   grids.add(new Grid(new aStarTactical<GridCell>(new ManhattanCover()), GRID_SCALE, true));
-
   
+  pathSeen.add(new ArrayList<Integer>());
+  pathSeen.add(new ArrayList<Integer>());
+
   initializeBoid();
   //initializeDecisionTree();
   nextSimulation();
@@ -141,14 +151,15 @@ void draw(){
   
   // Check if you've arrived at the destination
   if(follow.currPoint == follow.path.points.size() - 1) {
-    System.out.println("here!");
     // to check which enemy boid is seen by our boid
+    int seenCount = 0;
     for(DynamicBoid enemy: enemyBoids){
       if(enemy.seenByEnemy){
-        System.out.println("Seen!");
+        seenCount++;
         enemy.seenByEnemy = false;
       }
     }
+    pathSeen.get(activeGrid).add(new Integer(seenCount));
     // Move to next search algorithm
     activeGrid = (activeGrid + 1) % grids.size();
     // Reset boid position to start and change path
@@ -163,21 +174,14 @@ void draw(){
       nextSimulation();
     }
   }
+  
   //For checking current position within each enemyBoids radius
   for(DynamicBoid enemy: enemyBoids){
-    //PointPath currentPosition = follow.path;
     PVector enemyPosition = enemy.getPosition(); 
     PVector temp = boid.getPosition(); 
-   /*System.out.println("X for path= "+enemyPosition.x* GRID_SCALE);
-    System.out.println("Y for path= "+enemyPosition.y* GRID_SCALE);
-    System.out.println("X for currentPosition = "+ temp.x* GRID_SCALE);
-    System.out.println("Y for currentPosition = "+ temp.y* GRID_SCALE);
-    */
     if(abs(temp.x - enemyPosition.x)/ GRID_SCALE <= radius.x && abs(temp.y-enemyPosition.y)/GRID_SCALE <= radius.y){
-    enemy.seenByEnemy = true;
-    }
-    
-    
+      enemy.seenByEnemy = true;
+    } 
   }
   
   // Update game objects
