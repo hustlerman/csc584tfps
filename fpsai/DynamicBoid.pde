@@ -57,6 +57,10 @@ class DynamicBoid extends GameObject {
     popMatrix();
   }
   
+  void setPosition(PVector position) {
+    this.character.position =  position.copy();
+  }
+  
   PVector getPosition() {
     return character.position; 
   }
